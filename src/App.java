@@ -14,20 +14,17 @@ public class App {
         System.out.println("Calculator: ");
         String userInput = in.nextLine();
         StringTokenizer st = new StringTokenizer(userInput);
-        System.out.println("The user entered " + userInput);
+
         Vector<String> userInputSplited = new Vector<>();
         Stack<Double> outputStack = new Stack<Double>();
         double answer = 0;
 
+        // tokenizes the users input
         while(st.hasMoreTokens()){
             userInputSplited.add(st.nextToken());
         }
-        System.out.println("user data splited into " + userInputSplited.size() + " pieces");
-        for(int i = 0; i < userInputSplited.size(); i++) {
-            System.out.println(userInputSplited.get(i));
-        }
-        System.out.println("end");
 
+        // The operator classes purpose is to give mathimatical operators their priority based off of PEMDAS
         class Operator {
             private int value;
            
@@ -52,7 +49,10 @@ public class App {
 
         in.close();
         Operator sy = new Operator();
+        
+        //This for loop is where the shunting yard process begins basically we turn the expression into reverse polish notation
         for(int i = 0; i < userInputSplited.size(); i++) {
+            //takes the tokens we got from the user and splits it into a char array so we can check if it is a number or not
             char[] chars = userInputSplited.get(i).toCharArray();
             if(Character.isDigit(chars[0])){
                 postSyQueue.add((userInputSplited.elementAt(i)));
@@ -71,11 +71,17 @@ public class App {
                 }
             }
         }
-
+        // This takes care of any remaining operators inside the stack
         while (!operatorStack.empty()) {
             postSyQueue.add(operatorStack.pop());
         }
 
+        /* This is where we begin the math process basically the program goes through the outputStack which is in Reverse polish Notation and seperates it into two stacks 
+        * This process starts by popping the Queue that is in RPN we continue to pop into the output stack until we get to an operator at which point we pop 2 numbers out of the 
+        * output Stack and process that operation afterwards we push the answer of that operation back into the output stack and continue this process until we are done. 
+        * The end result should be that we only have one number in out output stack and that is our answer
+        */
+        
         while(!postSyQueue.isEmpty()) {
             if(Character.isDigit(postSyQueue.peek().charAt(0))) {
                 outputStack.push(Double.parseDouble(postSyQueue.poll()));
@@ -96,7 +102,7 @@ public class App {
             
         }
         
-        System.out.println("Answer : " + answer);
+        System.out.println("Answer : " + outputStack.pop());
 
     }
 }
